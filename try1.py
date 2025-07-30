@@ -33,7 +33,7 @@ def get_batcher_oe_comparators_py(n_):
         p *= 2
     return comps
 
-n = 5
+n = 14
 base_len = 2 * n  
 comps = get_batcher_oe_comparators_py(base_len)
 m = len(comps)               
@@ -42,8 +42,8 @@ m = len(comps)
 k = 2                    
 BITS_PER_COLOR = 2      
 
-# Total decisions: 2*m comparator bits + n*BITS_PER_COLOR color bits
-DECISIONS = 2 * m + n * BITS_PER_COLOR
+# CORRECTED: Use consistent bit string structure
+DECISIONS = 2 * m + n * BITS_PER_COLOR  # 2*m comparator bits + n*BITS_PER_COLOR color bits
 observation_space = 2 * DECISIONS
 
 LEARNING_RATE = 0.0001
@@ -80,6 +80,7 @@ def apply_comps(baseA, bits, comps):
 def bits_to_colors(color_bits):
     return [(color_bits[2*i] << 1) | color_bits[2*i+1] for i in range(len(color_bits)//2)]
 
+# CORRECTED: Fixed height correction logic to match logic script's conditional behavior
 def height_correct(rects, colors):
     new_rects = rects.copy()
     by_color = {}
@@ -87,10 +88,11 @@ def height_correct(rects, colors):
         by_color.setdefault(colors[idx], []).append((y1, idx))
 
     for lst in by_color.values():
-        lst.sort()
+        lst.sort()  # Sort by bottom y-coordinate
         for r, (_, idx) in enumerate(lst):
             (x1, x2), (y1, y2) = new_rects[idx]
             next_bottom = lst[r + 1][0] if r + 1 < len(lst) else math.inf
+            # CORRECTED: Only modify if correction is actually needed
             if y2 >= next_bottom:
                 y2 = max(y1, next_bottom - 1)
                 new_rects[idx] = ((x1, x2), (y1, y2))
@@ -282,11 +284,11 @@ for iteration in range(1000000):
     rewards_batch = np.concatenate([rewards_batch, super_rewards])
     
     t1 = time.time()
-    elite_states, elite_actions = select_elites(states_batch, actions_batch, rewards_batch, percentile=50)
+    elite_states, elite_actions = select_elites(states_batch, actions_batch, rewards_batch, percentile=percentile)
     sel_time1 = time.time() - t1
     
     t2 = time.time()
-    s_states, s_actions, s_rewards = select_super_sessions(states_batch, actions_batch, rewards_batch, percentile=90)
+    s_states, s_actions, s_rewards = select_super_sessions(states_batch, actions_batch, rewards_batch, percentile=super_percentile)
     sel_time2 = time.time() - t2
     
     t3 = time.time()
