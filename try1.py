@@ -38,12 +38,10 @@ base_len = 2 * n
 comps = get_batcher_oe_comparators_py(base_len)
 m = len(comps)               
 
-# Color parameters
 k = 2                    
 BITS_PER_COLOR = 2      
 
-# CORRECTED: Use consistent bit string structure
-DECISIONS = 2 * m + n * BITS_PER_COLOR  # 2*m comparator bits + n*BITS_PER_COLOR color bits
+DECISIONS = 2 * m + n * BITS_PER_COLOR
 observation_space = 2 * DECISIONS
 
 LEARNING_RATE = 0.0001
@@ -80,7 +78,6 @@ def apply_comps(baseA, bits, comps):
 def bits_to_colors(color_bits):
     return [(color_bits[2*i] << 1) | color_bits[2*i+1] for i in range(len(color_bits)//2)]
 
-# CORRECTED: Fixed height correction logic to match logic script's conditional behavior
 def height_correct(rects, colors):
     new_rects = rects.copy()
     by_color = {}
@@ -88,11 +85,10 @@ def height_correct(rects, colors):
         by_color.setdefault(colors[idx], []).append((y1, idx))
 
     for lst in by_color.values():
-        lst.sort()  # Sort by bottom y-coordinate
+        lst.sort()
         for r, (_, idx) in enumerate(lst):
             (x1, x2), (y1, y2) = new_rects[idx]
             next_bottom = lst[r + 1][0] if r + 1 < len(lst) else math.inf
-            # CORRECTED: Only modify if correction is actually needed
             if y2 >= next_bottom:
                 y2 = max(y1, next_bottom - 1)
                 new_rects[idx] = ((x1, x2), (y1, y2))
@@ -122,7 +118,6 @@ def solve_disjoint_rectangles(rectangles):
         elif len(covering) == 2:
             constraints.append(covering)
 
-    # lp
     lp_val = 0.0
     try:
         model_lp = gp.Model("maxDisjointRectangles_LP")
@@ -137,7 +132,6 @@ def solve_disjoint_rectangles(rectangles):
     except Exception as e:
         print("LP Exception:", e)
     
-    # ilp
     ilp_val = 0.0
     try:
         model_ilp = gp.Model("maxDisjointRectangles_ILP")
