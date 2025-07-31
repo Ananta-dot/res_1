@@ -33,7 +33,7 @@ def get_batcher_oe_comparators_py(n_):
         p *= 2
     return comps
 
-n = 14
+n = 5
 base_len = 2 * n  
 comps = get_batcher_oe_comparators_py(base_len)
 m = len(comps)               
