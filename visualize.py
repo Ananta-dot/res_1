@@ -11,7 +11,9 @@ def solve_disjoint_rectangles(rectangles):
     for (x1, x2), (y1, y2) in rectangles:
         for x in range(x1, x2):
             for y in range(y1, y2):
-                candidate_points.add((x + 0.5, y + 0.5))
+                candidate_points.add((x, y))
+
+    print("Candidate Points:", candidate_points)
 
     # Overlap constraints
     constraints = []
@@ -25,6 +27,8 @@ def solve_disjoint_rectangles(rectangles):
             return 0.0, 0.0, 0.0
         elif len(covering) == 2:
             constraints.append(covering)
+
+    print("constraints:", constraints)
 
     # LP model
     lp_val = 0.0
@@ -99,14 +103,14 @@ def calc_score(arrH, arrV, n):
         ax.add_patch(patch)
         ax.text(x1 + width / 2, y1 + height / 2, str(keys[i]), color='black', ha='center', va='center', fontsize=8)
 
-    ax.set_xlim(0, len(arrH))
-    ax.set_ylim(0, len(arrV))
+    ax.set_xlim(0, len(arrH)+2)
+    ax.set_ylim(0, len(arrV)+2)
     ax.set_xlabel('Horizontal')
     ax.set_ylabel('Vertical')
     ax.set_title('Rectangles Visualization')
     plt.grid(True)
     plt.gca().set_aspect('equal', adjustable='box')
-    plt.show()
+    #plt.show()
 
 # === Example ===
 arrH = [3, 8, 6, 8, 4, 5, 6, 1, 1, 2, 7, 3, 2, 4, 5, 7]
