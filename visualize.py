@@ -6,7 +6,6 @@ from gurobipy import GRB
 def solve_disjoint_rectangles(rectangles):
     n_rect = len(rectangles)
 
-    # Generate candidate points (centers of unit cells inside rectangles)
     candidate_points = set()
     for (x1, x2), (y1, y2) in rectangles:
         for x in range(x1, x2):
@@ -15,7 +14,6 @@ def solve_disjoint_rectangles(rectangles):
 
     print("Candidate Points:", candidate_points)
 
-    # Overlap constraints
     constraints = []
     for point in candidate_points:
         x, y = point
@@ -30,7 +28,6 @@ def solve_disjoint_rectangles(rectangles):
 
     print("constraints:", constraints)
 
-    # LP model
     lp_val = 0.0
     try:
         model_lp = gp.Model("maxDisjointRectangles_LP")
@@ -47,7 +44,6 @@ def solve_disjoint_rectangles(rectangles):
     except Exception as e:
         print("LP Exception:", e)
 
-    # ILP model
     ilp_val = 0.0
     try:
         model_ilp = gp.Model("maxDisjointRectangles_ILP")
@@ -110,9 +106,8 @@ def calc_score(arrH, arrV, n):
     ax.set_title('Rectangles Visualization')
     plt.grid(True)
     plt.gca().set_aspect('equal', adjustable='box')
-    #plt.show()
+    plt.show()
 
-# === Example ===
 arrH = [3, 8, 6, 8, 4, 5, 6, 1, 1, 2, 7, 3, 2, 4, 5, 7]
 arrV = [4, 8, 7, 1, 6, 4, 6, 3, 3, 8, 2, 7, 5, 5, 1, 2]
 n = 8
